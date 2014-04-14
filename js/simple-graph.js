@@ -53,11 +53,20 @@ SimpleGraph = function(elemid, options) {
     var xrange =  (this.options.xmax - this.options.xmin),
         yrange2 = (this.options.ymax - this.options.ymin) / 2,
         yrange4 = yrange2 / 2,
-        datacount = this.size.width/30;
+        datacount = this.size.width;
+
+    console.log("datacount: " + datacount);
 
     this.points = d3.range(datacount).map(function(i) {
         return { x: i * xrange / datacount, y: this.options.ymin + yrange4 + Math.random() * yrange2 };
     }, self);
+
+/*    this.points = d3.range(datacount).map(function (i) {
+        return {
+            x: i * xrange/datacount,
+            y: Math.sin(i * xrange/datacount)
+        };
+    }, self);*/
 
     this.vis = d3.select(this.chart).append("svg")
         .attr("width",  this.cx)
@@ -181,7 +190,7 @@ SimpleGraph.prototype.update = function() {
         d3.event.preventDefault();
         d3.event.stopPropagation();
     }
-}
+};
 
 SimpleGraph.prototype.datapoint_drag = function() {
     var self = this;
@@ -261,7 +270,7 @@ SimpleGraph.prototype.mouseup = function() {
             self.dragged = null
         }
     }
-}
+};
 
 SimpleGraph.prototype.keydown = function() {
     var self = this;
@@ -360,7 +369,7 @@ SimpleGraph.prototype.redraw = function() {
         self.plot.call(d3.behavior.zoom().x(self.x).y(self.y).on("zoom", self.redraw()));
         self.update();
     }
-}
+};
 
 SimpleGraph.prototype.xaxis_drag = function() {
     var self = this;
