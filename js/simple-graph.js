@@ -16,7 +16,7 @@ SimpleGraph = function(elemid, options) {
 
     this.padding = {
         "top":    this.options.title  ? 40 : 20,
-        "right":                 30,
+        "right":                        30,
         "bottom": this.options.xlabel ? 60 : 10,
         "left":   this.options.ylabel ? 70 : 45
     };
@@ -53,13 +53,13 @@ SimpleGraph = function(elemid, options) {
     var xrange =  (this.options.xmax - this.options.xmin),
         yrange2 = (this.options.ymax - this.options.ymin) / 2,
         yrange4 = yrange2 / 2,
-        datacount = this.size.width;
+        datacount = this.size.width/10;
 
     console.log("datacount: " + datacount);
 
-    this.points = d3.range(datacount).map(function(i) {
+/*    this.points = d3.range(datacount).map(function(i) {
         return { x: i * xrange / datacount, y: this.options.ymin + yrange4 + Math.random() * yrange2 };
-    }, self);
+    }, self);*/
 
 /*    this.points = d3.range(datacount).map(function (i) {
         return {
@@ -67,6 +67,9 @@ SimpleGraph = function(elemid, options) {
             y: Math.sin(i * xrange/datacount)
         };
     }, self);*/
+
+    this.func = [];
+    this.func.push(function (x) { return Math.sin(x); });
 
     this.vis = d3.select(this.chart).append("svg")
         .attr("width",  this.cx)
@@ -77,13 +80,15 @@ SimpleGraph = function(elemid, options) {
     this.plot = this.vis.append("rect")
         .attr("width", this.size.width)
         .attr("height", this.size.height)
-        .style("fill", "#EEEEEE")
+        //.style("fill", "#EEEEEE")
+        .style("stroke-width", "1")
+        .style("stroke", "rgb(0, 0, 0)")
         .attr("pointer-events", "all")
         .on("mousedown.drag", self.plot_drag())
-        .on("touchstart.drag", self.plot_drag())
+        .on("touchstart.drag", self.plot_drag());
     this.plot.call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
 
-    this.vis.append("svg")
+/*    this.vis.append("svg")
         .attr("top", 0)
         .attr("left", 0)
         .attr("width", this.size.width)
@@ -92,7 +97,7 @@ SimpleGraph = function(elemid, options) {
         .attr("class", "line")
         .append("path")
         .attr("class", "line")
-        .attr("d", this.line(this.points));
+        .attr("d", this.line(this.points));*/
 
     // add Chart Title
     if (this.options.title) {
@@ -149,8 +154,8 @@ SimpleGraph.prototype.plot_drag = function() {
             newpoint.y = self.y.invert(Math.max(0, Math.min(self.size.height, p[1])));
             self.points.push(newpoint);
             self.points.sort(function(a, b) {
-                if (a.x < b.x) { return -1 };
-                if (a.x > b.x) { return  1 };
+                if (a.x < b.x) { return -1 }
+                if (a.x > b.x) { return  1 }
                 return 0
             });
             self.selected = newpoint;
@@ -163,7 +168,7 @@ SimpleGraph.prototype.plot_drag = function() {
 
 SimpleGraph.prototype.update = function() {
     var self = this;
-    var lines = this.vis.select("path").attr("d", this.line(this.points));
+/*    var lines = this.vis.select("path").attr("d", this.line(this.points));*/
 
     /*добавляет окружности, в точки излом, котрые можно перетаскивать*/
 /*    var circle = this.vis.select("svg").selectAll("circle")
@@ -212,7 +217,7 @@ SimpleGraph.prototype.mousemove = function() {
         if (self.dragged) {
             self.dragged.y = self.y.invert(Math.max(0, Math.min(self.size.height, p[1])));
             self.update();
-        };
+        }
         if (!isNaN(self.downx)) {
             d3.select('body').style("cursor", "ew-resize");
             var rupx = self.x.invert(p[0]),
@@ -228,7 +233,7 @@ SimpleGraph.prototype.mousemove = function() {
             }
             d3.event.preventDefault();
             d3.event.stopPropagation();
-        };
+        }
         if (!isNaN(self.downy)) {
             d3.select('body').style("cursor", "ns-resize");
             var rupy = self.y.invert(p[1]),
@@ -259,7 +264,7 @@ SimpleGraph.prototype.mouseup = function() {
             self.downx = Math.NaN;
             d3.event.preventDefault();
             d3.event.stopPropagation();
-        };
+        }
         if (!isNaN(self.downy)) {
             self.redraw()();
             self.downy = Math.NaN;
@@ -292,6 +297,8 @@ SimpleGraph.prototype.keydown = function() {
 SimpleGraph.prototype.redraw = function() {
     var self = this;
     return function() {
+        var zoom = d3.behavior.zoom().x(self.x).y(self.y).on("zoom", self.redraw());
+
         var tx = function(d) {
                 return "translate(" + self.x(d) + ",0)";
             },
@@ -300,6 +307,9 @@ SimpleGraph.prototype.redraw = function() {
             },
             stroke = function(d) {
                 return d ? "#ccc" : "#666";
+            },
+            strokeWidth = function (d) {
+                return d ? "1" : "2.5";
             },
             fx = self.x.tickFormat(10),
             fy = self.y.tickFormat(10);
@@ -318,6 +328,7 @@ SimpleGraph.prototype.redraw = function() {
 
         gxe.append("line")
             .attr("stroke", stroke)
+            .attr("stroke-width", strokeWidth)
             .attr("y1", 0)
             .attr("y2", self.size.height);
 
@@ -350,6 +361,7 @@ SimpleGraph.prototype.redraw = function() {
 
         gye.append("line")
             .attr("stroke", stroke)
+            .attr("stroke-width", strokeWidth)
             .attr("x1", 0)
             .attr("x2", self.size.width);
 
@@ -366,7 +378,34 @@ SimpleGraph.prototype.redraw = function() {
             .on("touchstart.drag", self.yaxis_drag());
 
         gy.exit().remove();
-        self.plot.call(d3.behavior.zoom().x(self.x).y(self.y).on("zoom", self.redraw()));
+        self.plot.call(zoom);
+
+        var datacount = self.size.width,
+            left = self.x.domain()[0],
+            right = self.x.domain()[1],
+            xrange =  (right - left);
+        self.points = d3.range(datacount).map(function (i) {
+            return {
+                x: i * xrange/datacount + left,
+                y: Math.sin(i * xrange/datacount + left)
+            };
+        }, self);
+
+        if(typeof self.graph == "undefined") {
+            self.graph = self.vis.append("svg")
+                .attr("top", 0)
+                .attr("left", 0)
+                .attr("width", self.size.width)
+                .attr("height", self.size.height)
+                .attr("viewBox", "0 0 "+self.size.width+" "+self.size.height)
+                .attr("class", "line")
+                .append("path")
+                .attr("class", "line");
+        }
+
+        self.graph
+            .attr("d", self.line(self.points));
+
         self.update();
     }
 };

@@ -19,9 +19,10 @@
             padding: 0em 1em; }
         .axis { font-size: 1.5em; }
         .chart {
-            background-color: #F7F2C5;
-            width: 960px;
-            height: 500px; }
+        //    background-color: #F7F2C5;
+            width: 1500px;
+            height: 800px;
+        }
         circle, .line {
             fill: none;
             stroke: steelblue;
@@ -51,18 +52,6 @@
         "xlabel": "X Axis",
         "ylabel": "Y Axis"
     });
-
-    var factor = 2;
-    var datacount = factor*(graph.size.width);
-    var xrange = factor*(graph.options.xmax - graph.options.xmin);
-    graph.points = d3.range(datacount).map(function (i) {
-        return {
-            x: i * xrange/datacount - factor*5,
-            y: Math.sin(i * xrange/datacount)
-        };
-    }, graph);
-
-    graph.redraw()();
 </script>
 </body>
 </html>
