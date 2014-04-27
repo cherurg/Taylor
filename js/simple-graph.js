@@ -70,6 +70,7 @@ SimpleGraph = function(elemid, options) {
 
     this.func = [];
     this.func.push(function (x) { return Math.sin(x); });
+    this.funcToDraw = this.func[0];
 
     this.vis = d3.select(this.chart).append("svg")
         .attr("width",  this.cx)
@@ -122,7 +123,7 @@ SimpleGraph = function(elemid, options) {
 
     // add y-axis label
     if (this.options.ylabel) {
-        this.vis.append("g").append("text")
+        this.vis.append("text")
             .attr("class", "axis")
             .text(this.options.ylabel)
             .style("text-anchor","middle")
@@ -156,7 +157,7 @@ SimpleGraph.prototype.plot_drag = function() {
             self.points.sort(function(a, b) {
                 if (a.x < b.x) { return -1 }
                 if (a.x > b.x) { return  1 }
-                return 0
+                return 0;
             });
             self.selected = newpoint;
             self.update();
@@ -380,14 +381,21 @@ SimpleGraph.prototype.redraw = function() {
         gy.exit().remove();
         self.plot.call(zoom);
 
-        var datacount = self.size.width,
+        var datacount = self.size.width*5,
             left = self.x.domain()[0],
             right = self.x.domain()[1],
             xrange =  (right - left);
         self.points = d3.range(datacount).map(function (i) {
             return {
                 x: i * xrange/datacount + left,
-                y: Math.sin(i * xrange/datacount + left)
+                y: self.funcToDraw(i * xrange/datacount + left)
+            };
+        }, self);
+
+        self.pointsTaylor = d3.range(datacount).map(function (i) {
+            return {
+                x: i * xrange/datacount + left,
+                y: Math.cos(i * xrange/datacount + left)
             };
         }, self);
 
@@ -405,6 +413,9 @@ SimpleGraph.prototype.redraw = function() {
 
         self.graph
             .attr("d", self.line(self.points));
+
+        self.graph
+            .attr("d", self.line(self.pointsTaylor));
 
         self.update();
     }
