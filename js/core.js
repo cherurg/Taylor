@@ -68,5 +68,5 @@ var utils = (function () {
         isEqual: isEqual,
 
         isAPartOf: isAPartOf
-    };
+    }
 })();

@@ -85,8 +85,8 @@ SimpleGraph = function(elemid, options) {
         .style("stroke-width", "1")
         .style("stroke", "rgb(0, 0, 0)")
         .attr("pointer-events", "all")
-        .on("mousedown.drag", self.plot_drag())
-        .on("touchstart.drag", self.plot_drag());
+        .on("mousedown.drag", self.plotDrag())
+        .on("touchstart.drag", self.plotDrag());
     this.plot.call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
 
 /*    this.vis.append("svg")
@@ -131,8 +131,8 @@ SimpleGraph = function(elemid, options) {
     }
 
     d3.select(this.chart)
-        .on("mousemove.drag", self.mousemove())
-        .on("touchmove.drag", self.mousemove())
+        .on("mouseMove.drag", self.mouseMove())
+        .on("touchmove.drag", self.mouseMove())
         .on("mouseup.drag",   self.mouseup())
         .on("touchend.drag",  self.mouseup());
 
@@ -143,7 +143,7 @@ SimpleGraph = function(elemid, options) {
 // SimpleGraph methods
 //
 
-SimpleGraph.prototype.plot_drag = function() {
+SimpleGraph.prototype.plotDrag = function() {
     var self = this;
     return function() {
         registerKeyboardHandler(self.keydown());
@@ -209,7 +209,7 @@ SimpleGraph.prototype.datapoint_drag = function() {
     }
 };
 
-SimpleGraph.prototype.mousemove = function() {
+SimpleGraph.prototype.mouseMove = function() {
     var self = this;
     return function() {
         var p = d3.svg.mouse(self.vis[0][0]),
