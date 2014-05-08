@@ -102,22 +102,48 @@ SimpleGraph = function (elemid, options) {
         .on("touchmove.drag", self.mouseMove)
         .on("mouseup.drag",   self.mouseup)
         .on("touchend.drag",  self.mouseup);
+
+    this.redraw = this.redraw();
 };
 
 SimpleGraph.prototype.redraw = function () {
+
     console.log("redraw");
+
+    var self = this;
+    return function () {
+ /*       var tx = function (d) {
+                return "translate(" + self.x(d) + ",0)";
+            },
+            ty = function (d) {
+                return "translate(0," + self.y(d) + ")";
+            },
+            stroke = function (d) {
+                return d ? "#ccc" : "#666";
+            },
+            strokeWidth = function (d) {
+                return d ? "1" : "2.5";
+            },
+            fx = self.x.tickFormat(10),
+            fy = self.y.tickFormat(10);*/
+
+        console.log(self.constants.BOTTOM_LARGE_PADDING);
+    }
 };
 
 SimpleGraph.prototype.plotDrag = function () {
+
     console.log("plotDrag");
 };
 
 SimpleGraph.prototype.mouseMove = function () {
+
     console.log("mouseMove");
 };
 
 SimpleGraph.prototype.mouseup = function () {
 
+    console.log("mouseup");
 };
 
 SimpleGraph.prototype.constants = {
@@ -133,4 +159,27 @@ SimpleGraph.prototype.constants = {
     BOTTOM_SMALL_PADDING: 10,
     LEFT_LARGE_PADDING: 70,
     LEFT_SMALL_PADDING: 45
+};
+
+/**
+ *
+ * @param funcToDraw - массив функций, которые потом нарисовать. Рисоваться функции будут пачками.
+ */
+SimpleGraph.prototype.addFunction = function (funcToDraw) {
+
+    if (typeof this.funcs === "undefined") {
+        this.funcs = [];
+    }
+
+    funcs.push(funcToDraw);
+};
+
+SimpleGraph.prototype.modifyFuncPack = function (newFuncToDraw, number) {
+
+    this.funcs[number] = newFuncToDraw;
+};
+
+SimpleGraph.prototype.getFuncPack = function (funcPackNumber) {
+
+    return utils.extendDeep(this.funcs[funcPackNumber]);
 };
