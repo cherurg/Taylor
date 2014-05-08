@@ -298,7 +298,8 @@ SimpleGraph.prototype.keydown = function() {
 SimpleGraph.prototype.redraw = function() {
     var self = this;
     return function() {
-        var zoom = d3.behavior.zoom().x(self.x).y(self.y).on("zoom", self.redraw());
+        var zoom = d3.behavior.zoom()
+            .x(self.x).y(self.y).on("zoom", self.redraw());
 
         var tx = function(d) {
                 return "translate(" + self.x(d) + ",0)";
